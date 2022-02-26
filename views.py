@@ -14,13 +14,19 @@ def index():
 
 @app.route('/', methods=['POST'])
 def get_table():
+    """Get table without filters
+    Returns table in json"""
     page = int(flask.request.get_json()['page'])
     per_page = int(flask.request.get_json()['per_page'])
+
     session = create_session(DBUSER, DBPASSWORD, DBNAME, HOST, PORT)
     resources = session.query(Resource).all()
+
+    # slice by page
     pages = len(resources) / per_page
     pages = round(pages + (0.5 if pages % 1 > 0 else 0))
     resources = resources[(page - 1) * per_page:page * per_page]
+
     res_dict = {'pages': pages, 'resources': [{'date': res.date.strftime("%Y-%m-%d"),
                                                'name': res.name,
                                                'amount': res.amount,
@@ -31,6 +37,18 @@ def get_table():
 
 @app.route('/table', methods=['POST'])
 def update_table():
+    """
+    Update a table using options:
+    - page
+    - rows per page
+    - sort_field
+    - reverse (sort)
+    - search_field (field name)
+    - search_opt ("into", "larger", "less", "equals")
+    - search (value of search field)
+
+    Returns updated table in json
+    """
     request = flask.request.get_json()['request']
 
     session = create_session(DBUSER, DBPASSWORD, DBNAME, HOST, PORT)
@@ -78,6 +96,7 @@ def update_table():
 
 
 def set_query_order(query, instance, reverse):
+    """Set order of alchemy query"""
     if reverse:
         return query.order_by(instance.desc())
     else:
@@ -85,6 +104,7 @@ def set_query_order(query, instance, reverse):
 
 
 def set_filter_query(query, instance, search, operator):
+    """Add a filter with operator to alchemy query"""
     if operator == 'equals':
         return query.filter(instance == search)
     elif operator == 'into':

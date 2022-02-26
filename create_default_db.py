@@ -9,12 +9,18 @@ from base.connector import create_table, create_session
 
 
 def get_words(number: int):
+    """Get [number] words in alphabetical order"""
     response = requests.get("https://www.mit.edu/~ecprice/wordlist.10000")
     words = response.text.splitlines()
     return words[:number]
 
 
-def fill_base_with_random_data(session: Session, size: int = 100):
+def fill_base_with_random_data(session: Session, size: int = 100) -> None:
+    """
+
+    :param session: sqlalchemy session
+    :param size: number of record in DB to add
+    """
     words = get_words(size)
     for word in words:
         random_date = dt.now().date().replace(day=random.randint(1, 28), month=random.randint(1, 12))
@@ -28,7 +34,8 @@ def fill_base_with_random_data(session: Session, size: int = 100):
     session.commit()
 
 
-if __name__ == '__main__':
+def main():
+    """Create Resource table in DB and fill it with random data"""
     from config import DBUSER, DBPASSWORD, DBNAME, HOST, PORT
 
     create_table(Base, DBUSER, DBPASSWORD, DBNAME, HOST, PORT)
@@ -39,3 +46,7 @@ if __name__ == '__main__':
 
     if not resources:
         fill_base_with_random_data(session)
+
+
+if __name__ == '__main__':
+    main()
