@@ -4,8 +4,8 @@ import requests
 import random
 from sqlalchemy.orm import Session
 
-from models import Base, Resource
-from connector import create_table, create_session
+from base.models import Base, Resource
+from base.connector import create_table, create_session
 
 
 def get_words(number: int):
@@ -36,12 +36,11 @@ if __name__ == '__main__':
     host = os.environ.get("SQL_HOST", "localhost")
     port = os.environ.get("SQL_PORT", "5432")
 
-    dbname = "psgr_dev"
-    user = "psgr_user"
-    password = "psgr_pswrd"
-
     create_table(Base, user, password, dbname, host, port)
 
     session = create_session(user, password, dbname, host, port)
 
-    fill_base_with_random_data(session)
+    resources = session.query(Resource).all()
+
+    if not resources:
+        fill_base_with_random_data(session)

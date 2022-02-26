@@ -1,12 +1,7 @@
 import flask
 from base.models import Resource
 from base.connector import create_session
-from config import user, password, dbname, host, port
-
-
-dbname = "psgr_dev"
-user = "psgr_user"
-password = "psgr_pswrd"
+from config import DBUSER, DBPASSWORD, DBNAME, HOST, PORT
 
 
 app = flask.Flask(__name__, static_folder='static/')
@@ -21,7 +16,7 @@ def index():
 def get_table():
     page = int(flask.request.get_json()['page'])
     per_page = int(flask.request.get_json()['per_page'])
-    session = create_session(user, password, dbname, host, port)
+    session = create_session(DBUSER, DBPASSWORD, DBNAME, HOST, PORT)
     resources = session.query(Resource).all()
     pages = len(resources) / per_page
     pages = round(pages + (0.5 if pages % 1 > 0 else 0))
@@ -38,7 +33,7 @@ def get_table():
 def update_table():
     request = flask.request.get_json()['request']
 
-    session = create_session(user, password, dbname, host, port)
+    session = create_session(DBUSER, DBPASSWORD, DBNAME, HOST, PORT)
 
     page = int(flask.request.get_json()['page'])
     per_page = int(flask.request.get_json()['per_page'])

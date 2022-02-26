@@ -10,11 +10,8 @@ RUN python3 -m pip install --upgrade pip
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
-#"pip install python-dotenv"
 
-#RUN mkdir /cookbook
 COPY . .
-#WORKDIR /cookbook
 
 COPY entrypoint.sh .
 

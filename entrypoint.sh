@@ -11,7 +11,7 @@ then
     echo "PostgreSQL started"
 fi
 
-python base/create_default_db.py
+python create_default_db.py
 python main.py
 
 exec "$@"
