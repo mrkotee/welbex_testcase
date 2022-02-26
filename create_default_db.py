@@ -14,8 +14,8 @@ def get_words(number: int):
     return words[:number]
 
 
-def fill_base_with_random_data(session: Session):
-    words = get_words(100)
+def fill_base_with_random_data(session: Session, size: int = 100):
+    words = get_words(size)
     for word in words:
         random_date = dt.now().date().replace(day=random.randint(1, 28), month=random.randint(1, 12))
         session.add(
@@ -29,16 +29,11 @@ def fill_base_with_random_data(session: Session):
 
 
 if __name__ == '__main__':
+    from config import DBUSER, DBPASSWORD, DBNAME, HOST, PORT
 
-    user = os.environ.get("SQL_USER", "user")
-    password = os.environ.get("SQL_PASSWORD", "password")
-    dbname = os.environ.get("SQL_DATABASE")
-    host = os.environ.get("SQL_HOST", "localhost")
-    port = os.environ.get("SQL_PORT", "5432")
+    create_table(Base, DBUSER, DBPASSWORD, DBNAME, HOST, PORT)
 
-    create_table(Base, user, password, dbname, host, port)
-
-    session = create_session(user, password, dbname, host, port)
+    session = create_session(DBUSER, DBPASSWORD, DBNAME, HOST, PORT)
 
     resources = session.query(Resource).all()
 
